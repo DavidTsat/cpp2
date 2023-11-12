@@ -1,0 +1,133 @@
+#include <iostream>
+#include <cassert>
+#include <climits>
+
+using namespace std;
+
+class Solution {
+public:
+
+    void print_bin(const int a)
+    {
+        int c = 1 << (sizeof(int) * 8 - 2);
+
+        for (int i = 0; i < (sizeof(int) * 8 - 1); ++i)
+        {
+          //  cout << "c=" << (c >> i) <<endl;
+            cout << (((c >> i) & a) ? '1' : '0');
+        }
+        cout << endl;
+    }
+
+    unsigned leftmost_position(long d)
+    {
+        unsigned j = 0;
+        unsigned c = 1 << (sizeof(int) * 8 - 1);
+      //  cout << c;
+        for (int i = 0; i <= (sizeof(int) * 8 - 1); ++i)
+        {
+            ++j;
+            if ((c >> i) & d)
+                break;
+        }
+
+        return j;
+    }
+
+    int get_sub_int(long a, int j, int k)
+    {
+        //1 >> j;
+        --j;
+        int c = 0;
+        unsigned p = 1 << (sizeof(int) * 8 - 1);
+
+        while (j < k)
+        {
+                c <<= 1;
+                c |= (a & (p >> j++)) ? 1 : 0;
+        }
+        return c;
+    }
+
+public:
+    int divide(long a, long b) {
+        if (a == 0 || (a > 0 && a < b)) return 0;
+        // typedef dividend a;
+        // typedef divisor b;
+
+      //  cout << leftmost_position(a) << endl;
+      //  cout << leftmost_position(b) << endl;i
+        bool m = false;
+
+        long aa = unsigned (a);
+        long bb = unsigned (b);
+        if (a < 0) {aa = abs(a); m = true;}
+        if (b < 0) {bb = abs(b); m = m ? false : true;}
+
+        int q = 0;
+//      int r = 0;
+        int offset = leftmost_position(b) - leftmost_position(a);
+        assert(offset >= 0);
+        int b_len = sizeof(int)*8 - leftmost_position(b) + 1;
+        //cout << b_len;
+        /*
+        int bb = (b << offset);
+        cout << offset << " : " << bb << " : " << b_len << endl;
+        */
+        int j = leftmost_position(a);
+        int k = j + b_len - 1;
+        //cout << " j : k " << j << " " << k << endl;
+        int sub_a = get_sub_int(a, j, k);
+        int r = sub_a;
+
+        while (true)
+        {
+                if (r >= b)
+                {       q <<= 1;
+                        q |= 1;
+                        r = r - b;
+                }
+                else
+                {
+                        q <<= 1;
+//                      sub_a <<= 1;
+                }
+                if (k >= sizeof(int) * 8)
+                        break;
+
+                unsigned p = ((((unsigned)(1 << (sizeof(int) * 8 - 1))) >> k) & a) != 0;
+                r <<= 1;
+                r |= p;
+                ++k;
+        //      break;
+        }
+        cout << "remainder: = " << r << endl;
+        cout << "quotient: = " << q << endl;
+        cout << endl;
+        return m ? -q : q;
+    }
+};
+
+int main()
+{
+    Solution s;
+//    s.print_bin(10);
+//    s.print_bin(3);
+
+
+    cout<< s.divide(10, 3) << endl;//errroooororrr
+    cout<< s.divide(15, 13) << endl;//errroooororrr
+    cout<< s.divide(157487, 13) << endl;//errroooororrr
+
+    cout<< s.divide(1317118, 1317118) << endl;//errroooororrr
+
+    cout<< s.divide(7, -3) << endl;//errroooororrr
+
+    cout<< s.divide(0, -3) << endl;//errroooororrr
+
+    cout<< s.divide(-1, 1) << endl;//errroooororrr
+
+    cout<< s.divide(-2147483648, -1) << endl;//errroooororrr
+
+    return 0;
+}
